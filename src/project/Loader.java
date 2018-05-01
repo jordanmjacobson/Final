@@ -14,6 +14,11 @@ public class Loader {
 				String line2 = input.nextLine();
 				Scanner parser = new Scanner(line1+""+line2);
 				int firstInt = parser.nextInt();
+				if ( incode && firstInt == -1) incode = false;
+				else if(incode &&firstInt != -1) {
+					int arg  = parser.nextInt();
+					model.
+				}
 			}
 		}
 	}
