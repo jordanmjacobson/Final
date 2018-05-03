@@ -3,9 +3,10 @@ package project;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
+
 public interface Assembler {
+	Set<String> noArgument = new TreeSet<>(Arrays.asList("HALT", "NOP", "NOT"));
 	
-	Set<String> noArgument = new TreeSet<String>(Arrays.asList("HALT", "NOP", "NOT"));
 	/**
 	 * Method to assemble a file to its executable representation. 
 	 * If the input has errors one or more of the errors will be reported 
@@ -30,6 +31,5 @@ public interface Assembler {
 	 * is saved, -1 if the input or output files cannot be opened, 
 	 * otherwise the line number of a reported error.
 	 */
-	int assemble(String inputFileName, String outputFilename, StringBuilder error);
-	
+	int assemble(String inputFileName, String outputFileName, StringBuilder error);
 }

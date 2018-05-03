@@ -1,10 +1,10 @@
 package project;
 
-public class DivideByZeroException extends RuntimeException {
+public class CodeAccessException extends RuntimeException {
     /**
      * No-argument constructor needed for serialization
      */
-    public DivideByZeroException() {
+    public CodeAccessException() {
         super();
     }
     /**
@@ -12,7 +12,7 @@ public class DivideByZeroException extends RuntimeException {
      * of the exception object
      * @param arg0 message passed by the exception that was thrown
      */
-    public DivideByZeroException(String arg0) {
+    public CodeAccessException(String arg0) {
         super(arg0);
     }
 }
