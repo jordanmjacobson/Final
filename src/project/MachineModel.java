@@ -170,12 +170,8 @@ public class MachineModel {
         	cpu.incrementIP(memory.getData(cpu.memoryBase+arg));
         });        
         
-        //INSTRUCTION_MAP entry for "JUMPI"
-<<<<<<< HEAD
-        INSTRUCTIONS.put(8, arg -> {
-=======
         INSTRUCTIONS.put(0x8, arg -> {
->>>>>>> 4b9a49c0c8b6a4278b6500211bbab2edbd030da5
+
         	cpu.instructionPointer = currentJob.getStartcodeIndex() + arg;
         });
         

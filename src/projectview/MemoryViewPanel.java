@@ -1,6 +1,5 @@
 package projectview;
 
-//<<<<<<< HEAD
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -22,7 +21,7 @@ import javax.swing.border.TitledBorder;
 
 import project.Loader;
 import project.MachineModel;
-//<<<<<<< HEAD
+
 public class MemoryViewPanel implements Observer {
 	private MachineModel model;
 	private JScrollPane scroller;
@@ -31,6 +30,12 @@ public class MemoryViewPanel implements Observer {
 	int lower = -1;
 	int upper = -1;
 	int previousColor = -1;	
+	public MemoryViewPanel(ViewMediator gui,MachineModel mdl, int lwr, int upr) {
+		this.model = mdl;
+		this.lower = lwr;
+		this.upper = upr;
+		gui.addObserver(this);
+	}
 	public JComponent createMemoryDisplay() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
@@ -121,7 +126,7 @@ public class MemoryViewPanel implements Observer {
 		frame.setVisible(true);
 		System.out.println(Loader.load(model, new File("large.pexe"), 0, 0));
 		panel.update(view, null);
->>>>>>> 4b9a49c0c8b6a4278b6500211bbab2edbd030da5
+
 	}
 
 }
