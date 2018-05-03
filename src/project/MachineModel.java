@@ -4,6 +4,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MachineModel {
+	public int getOp(int i) {
+		return memory.getOp(i);
+	}
+	public int getArg(int i) {
+		return memory.getArg(i);
+	}
+	
+	int[] getCode() {
+		return memory.getCode();
+	}
+	public void setCode(int index, int op, int arg) {
+		memory.setCode(index, op, arg);
+	}
 	private class CPU{
 		private int accumulator;
 		private int instructionPointer;

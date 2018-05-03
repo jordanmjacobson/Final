@@ -15,15 +15,15 @@ public class SimpleAssembler implements Assembler {
 	private boolean readingCode = true;
 	private String makeOutputCode(String[] parts) {
 		if (parts.length == 1) {
-			return InstrMap.toCode.get(parts[0]) + "/n" + 0;
+			return InstrMap.toCode.get(parts[0]) + "\n" + 0;
 		}
 		else if (parts.length == 2) {
-			return InstrMap.toCode.get(parts[0]) +"/n" + Integer.parseInt(parts[1],16);
+			return InstrMap.toCode.get(parts[0]) +"\n" + Integer.parseInt(parts[1],16);
 		}
 		return parts[0];
 	}
 	private String makeOutputData (String[] parts) {
-		return Integer.parseInt(parts[0],16) + "/n" +Integer.parseInt(parts[1], 16);
+		return Integer.parseInt(parts[0],16) + "\n" +Integer.parseInt(parts[1], 16);
 	}
 	@Override
 	public int assemble(String inputFileName, String outputFileName, StringBuilder error) {
