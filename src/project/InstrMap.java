@@ -5,7 +5,8 @@ import java.util.TreeMap;
 
 public class InstrMap {
 	public static Map<String, Integer> toCode = new TreeMap<>();
-	public static Map <Integer, String> toMnemonic = new TreeMap<>();
+	public static Map<Integer, String> toMnemonic = new TreeMap<>();
+	
 	static {
 		 toCode.put("NOP", 0);
 		 toCode.put("LODI", 1);
@@ -30,7 +31,7 @@ public class InstrMap {
 		 toCode.put("MULN", 0x14);
 		 toCode.put("DIVI", 0x15);
 		 toCode.put("DIV", 0x16);
-		 toCode.put("DIVN", 17);
+		 toCode.put("DIVN", 0x17);
 		 toCode.put("ANDI", 0x18);
 		 toCode.put("AND", 0x19);
 		 toCode.put("NOT", 0x1A);
@@ -38,9 +39,8 @@ public class InstrMap {
 		 toCode.put("CMPZ", 0x1C);
 		 toCode.put("HALT", 0x1F);
 		 
-		 
 		 for(String s : toCode.keySet()) {
 			 toMnemonic.put(toCode.get(s), s);
 		 }
-	}		 
+	}	
 }

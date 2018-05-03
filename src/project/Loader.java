@@ -8,40 +8,43 @@ import java.util.Scanner;
 public class Loader {
 	public static String load(MachineModel model, File file, int codeOffset, int memoryOffset) {
 		int codeSize = 0;
-		if (model == null || file == null) return null;
+		if (model == null || file == null) {
+			return null;
+		}
+		
 		try (Scanner input = new Scanner(file)){
 			boolean incode = true;
 			while (input.hasNextLine()) {
 				String line1 = input.nextLine();
 				String line2 = input.nextLine();
-				Scanner parser = new Scanner(line1+" "+line2);
+				Scanner parser = new Scanner(line1 + " " + line2);
 				int firstInt = parser.nextInt();
-				if ( incode && firstInt == -1) incode = false;
-				else if(incode &&firstInt != -1) {
-					int arg  = parser.nextInt();
-					model.setCode(codeOffset+codeSize, firstInt, arg);
-					codeSize++;
-				}
-				else {
-					int val  = parser.nextInt();
-					model.setData(firstInt+memoryOffset, val);
+				if (incode && firstInt == -1) {
+					incode = false;
+				} else if (incode && firstInt != -1) {
+					int arg = parser.nextInt();
+					model.setCode(codeOffset + codeSize, firstInt, arg);
+					codeSize ++;
+				} else if (!incode) {
+					int value = parser.nextInt();
+					model.setData(firstInt + memoryOffset, value);
 				}
 				parser.close();
 			}
-		} 
-		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			return "File name not found";
+
+			return "" + codeSize;
+			
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return "Array Index " + e.getMessage();
+		} catch (NoSuchElementException e) {
+			return "From Scanner: NoSuchElementException";
+		} catch (FileNotFoundException e) {
+			return "File " + file.getName() + " Not Found";
 		}
-		catch (ArrayIndexOutOfBoundsException e) {
-			return("Array Index: " + e.getMessage());
-		}
-		 catch (NoSuchElementException e) {
-			 return "From scanner no such element exception";
-		 }
-		return "" + codeSize;
 		
+				
 	}
+	
 	public static void main(String[] args) {
 		MachineModel model = new MachineModel();
 		String s = Loader.load(model, new File("factorial8.pexe"),100,200);
