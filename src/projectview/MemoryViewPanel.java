@@ -1,10 +1,6 @@
 package projectview;
 
-<<<<<<< HEAD
-import java.util.Observable;
-import java.util.Observer;
-=======
->>>>>>> 4b9a49c0c8b6a4278b6500211bbab2edbd030da5
+//<<<<<<< HEAD
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -12,6 +8,7 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -22,9 +19,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import project.MachineModel;
+
 import project.Loader;
-<<<<<<< HEAD
+import project.MachineModel;
+//<<<<<<< HEAD
 public class MemoryViewPanel implements Observer {
 	private MachineModel model;
 	private JScrollPane scroller;
@@ -32,30 +30,7 @@ public class MemoryViewPanel implements Observer {
 	private JTextField [] dataDecimal;
 	int lower = -1;
 	int upper = -1;
-	int previousColor = -1;
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-
-=======
-
-public class MemoryViewPanel implements Observer {
-
-	private MachineModel model;
-	private JScrollPane scroller;
-	private JTextField[] dataHex;
-	private JTextField[] dataDecimal;
-	private int lower = -1;
-	private int upper = -1;
-	private int previousColor = -1;
-	
-	public MemoryViewPanel (ViewMediator gui, MachineModel mdl, int lwr, int upr) {
-		this.model = mdl;
-		this.lower = lwr;
-		this.upper = upr;
-		gui.addObserver(this);
-	}
-	
+	int previousColor = -1;	
 	public JComponent createMemoryDisplay() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
