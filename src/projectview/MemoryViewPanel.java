@@ -7,7 +7,6 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
-
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -18,24 +17,26 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-
-import project.Loader;
 import project.MachineModel;
+import project.Loader;
 
 public class MemoryViewPanel implements Observer {
+
 	private MachineModel model;
 	private JScrollPane scroller;
-	private JTextField [] dataHex;
-	private JTextField [] dataDecimal;
-	int lower = -1;
-	int upper = -1;
-	int previousColor = -1;	
-	public MemoryViewPanel(ViewMediator gui,MachineModel mdl, int lwr, int upr) {
+	private JTextField[] dataHex;
+	private JTextField[] dataDecimal;
+	private int lower = -1;
+	private int upper = -1;
+	private int previousColor = -1;
+	
+	public MemoryViewPanel (ViewMediator gui, MachineModel mdl, int lwr, int upr) {
 		this.model = mdl;
 		this.lower = lwr;
 		this.upper = upr;
 		gui.addObserver(this);
 	}
+	
 	public JComponent createMemoryDisplay() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
@@ -48,7 +49,7 @@ public class MemoryViewPanel implements Observer {
 		panel.setBorder(border);
 		
 		JPanel innerPanel = new JPanel();
-		panel.setLayout(new BorderLayout());
+		innerPanel.setLayout(new BorderLayout());
 		
 		JPanel numPanel = new JPanel();
 		JPanel decimalPanel = new JPanel();
@@ -126,7 +127,6 @@ public class MemoryViewPanel implements Observer {
 		frame.setVisible(true);
 		System.out.println(Loader.load(model, new File("large.pexe"), 0, 0));
 		panel.update(view, null);
-
 	}
 
 }

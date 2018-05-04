@@ -7,9 +7,11 @@ import java.awt.GridLayout;
 import java.util.Observable;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import project.CodeAccessException;
+import project.DivideByZeroException;
 import project.MachineModel;
 import project.Memory;
 
@@ -28,20 +30,94 @@ public class ViewMediator extends Observable {
 	private Animator animator;
 	
 	public void step() {
-		try {
-			int ip = model.getInstructionPointer();
-			if (!(model.getCurrentJob().getStartcodeIndex() <= ip) &&
-					!(ip < model.getCurrentJob().getStartcodeIndex()+model.getCurrentJob().getCodeSize())) {
-				throw new CodeAccessException("Instruction Pointer not between currentJob's starting code index and starting code index + code size");
-			}
-			
-			int opcode = model.getOp(ip);
-			int arg = model.getArg(ip);
-			model.get(opcode).execute(arg);
-		} catch (Exception e) {
-			model.get(0x1F).execute(model.getArg(model.getInstructionPointer()));
-			throw e;
+		if (model.getCurrentState() != States.PROGRAM_HALTED && model.getCurrentState() != States.NOTHING_LOADED) {
+			try {
+				model.step();
+			} catch (CodeAccessException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+					frame, 
+					"Illegal access to code from line " + model.getInstructionPointer() + "\n"
+					+ "Exception message: " + e.getMessage(),
+					"Run time error",
+					JOptionPane.OK_OPTION);
+			} catch (ArrayIndexOutOfBoundsException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+					frame, 
+					"Illegal access to data from line " + model.getInstructionPointer() + "\n"
+					+ "Exception message: " + e.getMessage(),
+					"Run time error",
+					JOptionPane.OK_OPTION);
+			} catch (NullPointerException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+						frame, 
+						"NullPointerException to data from line " + model.getInstructionPointer() + "\n"
+						+ "Exception message: " + e.getMessage(),
+						"Run time error",
+						JOptionPane.OK_OPTION);
+			} catch (IllegalArgumentException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+						frame, 
+						"Program error from line " + model.getInstructionPointer() + "\n"
+						+ "Exception message: " + e.getMessage(),
+						"Run time error",
+						JOptionPane.OK_OPTION);
+			} catch (DivideByZeroException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+						frame, 
+						"Divide by zero from line " + model.getInstructionPointer() + "\n"
+						+ "Exception message: " + e.getMessage(),
+						"Run time error",
+						JOptionPane.OK_OPTION);
+			} 
+			setChanged();
+			notifyObservers();
 		}
+		
+	}
+	
+	public void execute() {
+		while (model.getCurrentState() != States.PROGRAM_HALTED && model.getCurrentState() != States.NOTHING_LOADED) {
+			try {
+				model.step();
+			} catch (CodeAccessException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+					frame, 
+					"Illegal access to code from line " + model.getInstructionPointer() + "\n"
+					+ "Exception message: " + e.getMessage(),
+					"Run time error",
+					JOptionPane.OK_OPTION);
+			} catch (ArrayIndexOutOfBoundsException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+					frame, 
+					"Illegal access to data from line " + model.getInstructionPointer() + "\n"
+					+ "Exception message: " + e.getMessage(),
+					"Run time error",
+					JOptionPane.OK_OPTION);
+			} catch (NullPointerException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+						frame, 
+						"NullPointerException to data from line " + model.getInstructionPointer() + "\n"
+						+ "Exception message: " + e.getMessage(),
+						"Run time error",
+						JOptionPane.OK_OPTION);
+			} catch (IllegalArgumentException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+						frame, 
+						"Program error from line " + model.getInstructionPointer() + "\n"
+						+ "Exception message: " + e.getMessage(),
+						"Run time error",
+						JOptionPane.OK_OPTION);
+			} catch (DivideByZeroException e) { // import project.CodeAccessException at the start of the class
+				JOptionPane.showMessageDialog(
+						frame, 
+						"Divide by zero from line " + model.getInstructionPointer() + "\n"
+						+ "Exception message: " + e.getMessage(),
+						"Run time error",
+						JOptionPane.OK_OPTION);
+			} 
+		}
+		setChanged();
+		notifyObservers();
 	}
 	
 	public MachineModel getModel() {
@@ -56,33 +132,67 @@ public class ViewMediator extends Observable {
 	}
 	
 	public void clearJob() {
-		
+		model.clearJob();
+		model.setCurrentState(States.NOTHING_LOADED);
+		model.getCurrentState().enter();
+		setChanged();
+		notifyObservers("Clear");
 	}
 	
-	public void makeReady(String s) {
-		
+	public void makeReady(String string) {
+		animator.setAutoStepOn(false);
+		model.setCurrentState(States.PROGRAM_LOADED_NOT_AUTOSTEPPING);
+		model.getCurrentState().enter();
+		setChanged();
+		notifyObservers(string);
+	}
+	
+	public void toggleAutoStep() {
+		animator.toggleAutoStep();
+		if (animator.isAutoStepOn()) {
+			model.setCurrentState(States.AUTO_STEPPING);
+		} else {
+			model.setCurrentState(States.PROGRAM_LOADED_NOT_AUTOSTEPPING);
+			model.getCurrentState().enter();
+			setChanged();
+			notifyObservers();
+		}
+	}
+	
+	public void reload() {
+		animator.setAutoStepOn(false);
+		clearJob();
+		filesManager.finalLoad_ReloadStep(model.getCurrentJob());
+	}
+	
+	public void loadFile() {
+		filesManager.loadFile(model.getCurrentJob());
 	}
 	
 	private void createAndShowGUI() {
-		this.animator = new Animator(this);
-		this.filesManager = new FilesManager(this);
+		animator = new Animator(this);
+		filesManager = new FilesManager(this);
 		filesManager.initialize();
-		this.codeViewPanel = new CodeViewPanel(this, model);
-		this.memoryViewPanel1 = new MemoryViewPanel(this, model, 0, 240);
-		this.memoryViewPanel2 = new MemoryViewPanel(this, model, 240, Memory.DATA_SIZE/2);
-		this.memoryViewPanel3 = new MemoryViewPanel(this, model, Memory.DATA_SIZE/2, Memory.DATA_SIZE);
-		//this.controlPanel = new ControlPanel(this);
-		//this.processorPanel = new ProcessorPanel(this);
-		//this.menuBuilder = new MenuBarBuilder(this);
-		this.frame = new JFrame("Simulator");
+		
+		codeViewPanel = new CodeViewPanel(this, model);
+		memoryViewPanel1 = new MemoryViewPanel(this, model, 0, 240);
+		memoryViewPanel2 = new MemoryViewPanel(this, model, 240, Memory.DATA_SIZE/2);
+		memoryViewPanel3 = new MemoryViewPanel(this, model, Memory.DATA_SIZE/2, Memory.DATA_SIZE);
+		
+		//controlPanel = new ControlPanel(this);
+		//processorPanel = new ProcessorPanel(this, model);
+		//menuBuilder = new MenuBarBuilder(this);
+		
+		frame = new JFrame("Simulator");
 		
 		Container content = frame.getContentPane();
-		
-		content.setLayout(new BorderLayout(1, 1));
+		content.setLayout(new BorderLayout(1,1));
 		content.setBackground(Color.BLACK);
-		content.setSize(1200, 600);
 		
-		JPanel center = new JPanel(new GridLayout(1, 3));
+		frame.setSize(1200, 600);
+		
+		JPanel center = new JPanel();
+		center.setLayout(new GridLayout(1, 3));
 		frame.add(codeViewPanel.createCodeDisplay(), BorderLayout.LINE_START);
 		
 		center.add(memoryViewPanel1.createMemoryDisplay());
@@ -90,13 +200,55 @@ public class ViewMediator extends Observable {
 		center.add(memoryViewPanel3.createMemoryDisplay());
 		
 		frame.add(center, BorderLayout.CENTER);
-		//return HERE for the other GUI components
+		//return HERE for other GUI components
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// return HERE for other setup details
 		frame.setVisible(true);
 	}
 	
+	
+	public States getCurrentState() {
+		return model.getCurrentState();
+	}
+
+	public void setCurrentState(States currentState) {
+		model.setCurrentState(currentState);
+		if (currentState == States.PROGRAM_HALTED) {
+			animator.setAutoStepOn(false);
+			model.getCurrentState().enter();
+			setChanged();
+			notifyObservers();
+		}
+	}
+	
+	public void assembleFile() {
+		filesManager.assembleFile();
+	}
+
+	public void setPeriod(int period) {
+		animator.setPeriod(period);
+	}
+	
+
+	public void setJob(int i) {
+		model.setJob(i);
+		if (model.getCurrentState() != null) {
+			model.getCurrentState().enter();
+			setChanged();
+			notifyObservers();
+		}
+	}
+
+	public void exit() { // method executed when user exits the program
+		int decision = JOptionPane.showConfirmDialog(
+				frame, "Do you really wish to exit?",
+				"Confirmation", JOptionPane.YES_NO_OPTION);
+		if (decision == JOptionPane.YES_OPTION) {
+			System.exit(0);
+		}
+	}
+
 	// CORRECTED LATER IN THE EVENING
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
