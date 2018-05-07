@@ -1,10 +1,5 @@
 package projectview;
 
-<<<<<<< HEAD
-import java.util.Observable;
-import java.util.Observer;
-=======
->>>>>>> 4b9a49c0c8b6a4278b6500211bbab2edbd030da5
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -24,20 +19,6 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import project.MachineModel;
 import project.Loader;
-<<<<<<< HEAD
-public class MemoryViewPanel implements Observer {
-	private MachineModel model;
-	private JScrollPane scroller;
-	private JTextField [] dataHex;
-	private JTextField [] dataDecimal;
-	int lower = -1;
-	int upper = -1;
-	int previousColor = -1;
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-
-=======
 
 public class MemoryViewPanel implements Observer {
 
@@ -146,7 +127,6 @@ public class MemoryViewPanel implements Observer {
 		frame.setVisible(true);
 		System.out.println(Loader.load(model, new File("large.pexe"), 0, 0));
 		panel.update(view, null);
->>>>>>> 4b9a49c0c8b6a4278b6500211bbab2edbd030da5
 	}
 
 }

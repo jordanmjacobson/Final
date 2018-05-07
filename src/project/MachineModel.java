@@ -171,11 +171,7 @@ public class MachineModel {
         });        
         
         //INSTRUCTION_MAP entry for "JUMPI"
-<<<<<<< HEAD
-        INSTRUCTIONS.put(8, arg -> {
-=======
         INSTRUCTIONS.put(0x8, arg -> {
->>>>>>> 4b9a49c0c8b6a4278b6500211bbab2edbd030da5
         	cpu.instructionPointer = currentJob.getStartcodeIndex() + arg;
         });
         
@@ -369,6 +365,23 @@ public class MachineModel {
 		cpu.accumulator = 0;
 		cpu.instructionPointer = currentJob.getStartcodeIndex();
 		currentJob.reset();
+	}
+	
+	public void step() {
+		try {
+			int ip = getInstructionPointer();
+			if (!(getCurrentJob().getStartcodeIndex() <= ip) &&
+					!(ip < getCurrentJob().getStartcodeIndex()+getCurrentJob().getCodeSize())) {
+				throw new CodeAccessException("Instruction Pointer not between currentJob's starting code index and starting code index + code size");
+			}
+			
+			int opcode = getOp(ip);
+			int arg = getArg(ip);
+			get(opcode).execute(arg);
+		} catch (Exception e) {
+			callback.halt();
+			throw e;
+		}
 	}
 
 	public String getHex(int i) {
