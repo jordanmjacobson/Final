@@ -1,4 +1,10 @@
 #File locations
+<<<<<<< HEAD
 #Wed May 09 15:14:01 EDT 2018
 ExecutableDirectory=C\:/Users/Jordan/Documents/Eclipse/Final/
 SourceDirectory=C\:/Users/Jordan/Documents/Eclipse/Final/
+=======
+#Wed May 09 15:43:21 EDT 2018
+ExecutableDirectory=C\:/Users/Billy/eclipse-workspace/Final/
+SourceDirectory=C\:/Users/Billy/eclipse-workspace/Final/
+>>>>>>> 660c1b76de96e0da31f2aafe3cad8c1f2179a04e
