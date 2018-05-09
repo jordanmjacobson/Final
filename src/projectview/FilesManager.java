@@ -28,6 +28,7 @@ public class FilesManager {
 	
 	public FilesManager(ViewMediator view) {
 		this.view = view;
+		model = view.getModel();
 	}
 	
 	public void initialize() {
@@ -201,6 +202,7 @@ public class FilesManager {
 		view.clearJob();
 		String str = Loader.load(model, currentlyExecutingFile, 
 				job.getStartcodeIndex(), job.getStartmemoryIndex());
+		System.out.println(str);
 		try {
 			int len = Integer.parseInt(str);
 			job.setCodeSize(len);
