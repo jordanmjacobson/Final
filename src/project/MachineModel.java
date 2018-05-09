@@ -201,6 +201,12 @@ public class MachineModel {
         		cpu.incrementIP(1);
         });
         
+        //INSTRUCTION_MAP entry for "JUMPN"
+        INSTRUCTIONS.put(29, arg -> {
+        	int arg1 = memory.getData(cpu.memoryBase+arg);
+        	cpu.instructionPointer = currentJob.getStartcodeIndex() + arg1;
+        });
+        
         //INSTRUCTION_MAP entry for "ANDI"
         INSTRUCTIONS.put(0x18, arg -> {
         	if (cpu.accumulator != 0 && arg != 0) {

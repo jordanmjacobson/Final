@@ -23,7 +23,7 @@ public class ViewMediator extends Observable {
 	private MemoryViewPanel memoryViewPanel1;
 	private MemoryViewPanel memoryViewPanel2;
 	private MemoryViewPanel memoryViewPanel3;
-	// private ControlPanel controlPanel;
+	private ControlPanel controlPanel;
 	private ProcessorViewPanel processorPanel;
 	private MenuBarBuilder menuBuilder;
 	private JFrame frame;
@@ -121,10 +121,11 @@ public class ViewMediator extends Observable {
 			model.setCurrentState(States.AUTO_STEPPING);
 		} else {
 			model.setCurrentState(States.PROGRAM_LOADED_NOT_AUTOSTEPPING);
-			model.getCurrentState().enter();
-			setChanged();
-			notifyObservers();
 		}
+		model.getCurrentState().enter();
+		setChanged();
+		notifyObservers();
+		
 	}
 
 	public void reload() {
@@ -141,46 +142,54 @@ public class ViewMediator extends Observable {
 		animator = new Animator(this);
 		filesManager = new FilesManager(this);
 		filesManager.initialize();
-
+		
+		//create all the panels that we need
 		codeViewPanel = new CodeViewPanel(this, model);
 		memoryViewPanel1 = new MemoryViewPanel(this, model, 0, 240);
-		memoryViewPanel2 = new MemoryViewPanel(this, model, 240, Memory.DATA_SIZE / 2);
-		memoryViewPanel3 = new MemoryViewPanel(this, model, Memory.DATA_SIZE / 2, Memory.DATA_SIZE);
-		frame = new JFrame("Simulator");
+		memoryViewPanel2 = new MemoryViewPanel(this, model, 240, Memory.DATA_SIZE/2);
+		memoryViewPanel3 = new MemoryViewPanel(this, model, Memory.DATA_SIZE/2, Memory.DATA_SIZE);
+		controlPanel = new ControlPanel(this);
 		processorPanel = new ProcessorViewPanel(this, model);
-		frame.add(processorPanel.createProcessorDisplay(),BorderLayout.PAGE_START);
-		JMenuBar bar = new JMenuBar();
-		frame.setJMenuBar(bar);
 		menuBuilder = new MenuBarBuilder(this);
-
-		bar.add(menuBuilder.createFileMenu());
-		bar.add(menuBuilder.createExecuteMenu());
-		bar.add(menuBuilder.createJobsMenu());
-
-		// controlPanel = new ControlPanel(this);
 		
+		//create main frame where all the panels will be added
+		frame = new JFrame("Simulator");
 		
-
-
 		Container content = frame.getContentPane();
-		content.setLayout(new BorderLayout(1, 1));
+		content.setLayout(new BorderLayout(1,1));
 		content.setBackground(Color.BLACK);
-
-		frame.setSize(1200, 600);
-
+		frame.setSize(1200,600);
 		JPanel center = new JPanel();
-		center.setLayout(new GridLayout(1, 3));
-		frame.add(codeViewPanel.createCodeDisplay(), BorderLayout.LINE_START);
-
+		center.setLayout(new GridLayout(1,3));
+		
+		//add codeViewPanel and memory view panel
+		frame.add(codeViewPanel.createCodeDisplay(),BorderLayout.LINE_START);
+		frame.add(center,BorderLayout.CENTER);
 		center.add(memoryViewPanel1.createMemoryDisplay());
 		center.add(memoryViewPanel2.createMemoryDisplay());
 		center.add(memoryViewPanel3.createMemoryDisplay());
+		
+		//add the file, execute, and change jobs drop downs
+		JMenuBar bar = new JMenuBar();
+		frame.setJMenuBar(bar);
+		bar.add(menuBuilder.createFileMenu());
+		bar.add(menuBuilder.createExecuteMenu());
+		bar.add(menuBuilder.createJobsMenu());
+		
+		//add the control panel buttons, step, run/pause, clear, and reload
+		frame.add(controlPanel.createControlDisplay(),BorderLayout.PAGE_END);
+		
+		//add the ip, membase, and accumulator to top of gui
+		frame.add(processorPanel.createProcessorDisplay(),BorderLayout.PAGE_START);
 
-		frame.add(center, BorderLayout.CENTER);
-		// return HERE for other GUI components
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(WindowListenerFactory.windowClosingFactory(e -> exit()));
+		model.setCurrentState(States.NOTHING_LOADED);
+		animator.start();
+		model.getCurrentState().enter();
+		setChanged();
+		notifyObservers();
 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// return HERE for other setup details
 		frame.setVisible(true);
 	}
 
