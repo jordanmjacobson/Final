@@ -1,5 +1,7 @@
 package project;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -16,23 +18,26 @@ public class FullAssembler implements Assembler {
 	public int assemble(String inputFileName, String outputFileName, StringBuilder error) {
 		lineNumber = 0;
 		int retVal = 0;
-		try (Scanner s = new Scanner(inputFileName)) { // pass 1
+		try (Scanner s = new Scanner(new File(inputFileName))) { // pass 1
 			while (s.hasNextLine()) {
 				lineNumber++;
 				String line = s.nextLine();
+				System.out.println("line " + lineNumber + ": " + line);
 
 				if (line.trim().length() == 0) { // error 1
 					blankLine = true;
 					blankLineNumber = lineNumber;
+					continue;
 				}
 
 				if (blankLine && line.trim().length() > 0) {
 					error.append("\nError on line " + (blankLineNumber) + ": illegal blank line");
 					retVal = blankLineNumber;
 					blankLine = false;
+					continue;
 				}
 
-				if (line.charAt(0) == ' ' || line.charAt(0) == '\t') { // error 2
+				if (line.length() != 0 && (line.charAt(0) == ' ' || line.charAt(0) == '\t')) { // error 2
 					error.append("\nError on line " + (lineNumber) + ": illegal white space");
 					retVal = lineNumber;
 				}
@@ -49,13 +54,15 @@ public class FullAssembler implements Assembler {
 						readingCode = false;
 					}
 				}
-
 				if (readingCode) {
 					code.add(line.trim());
 				} else {
 					data.add(line.trim());
 				}
 			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 		lineNumber = 0;

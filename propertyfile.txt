@@ -1,4 +1,4 @@
 #File locations
-#Thu May 10 14:45:05 EDT 2018
-ExecutableDirectory=C\:/Users/Billy/eclipse-workspace/Final/
-SourceDirectory=C\:/Users/Billy/eclipse-workspace/Final/
+#Thu May 10 16:10:13 EDT 2018
+ExecutableDirectory=/Users/BillyDeTorres/Documents/GitHub/Final/
+SourceDirectory=/Users/BillyDeTorres/Documents/GitHub/Final/
