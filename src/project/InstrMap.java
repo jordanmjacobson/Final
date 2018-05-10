@@ -20,6 +20,7 @@ public class InstrMap {
 		 toCode.put("JMPZR", 9);
 		 toCode.put("JMPZ", 0xA);
 		 toCode.put("JMPZI", 0xB);
+		 toCode.put("JUMPN", 29); // 29 = 0x1D
 		 toCode.put("ADDI", 0xC);
 		 toCode.put("ADD", 0xD);
 		 toCode.put("ADDN", 0xE);

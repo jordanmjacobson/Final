@@ -20,8 +20,8 @@ public enum States {
 			states[CLEAR] = false;
 			states[LOAD] = true;
 			states[RELOAD] = false;
-			states[RUN] = true;
-			states[RUNNING] = true;
+			states[RUN] = false;
+			states[RUNNING] = false;
 			states[STEP] = false;
 			states[CHANGE_JOB] = true;
 		}
