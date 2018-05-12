@@ -25,8 +25,10 @@ public class FullAssembler implements Assembler {
 				System.out.println("line " + lineNumber + ": " + line);
 
 				if (line.trim().length() == 0) { // error 1
+					if (!blankLine) {
+						blankLineNumber = lineNumber;
+					}
 					blankLine = true;
-					blankLineNumber = lineNumber;
 					continue;
 				}
 
@@ -34,7 +36,7 @@ public class FullAssembler implements Assembler {
 					error.append("\nError on line " + (blankLineNumber) + ": illegal blank line");
 					retVal = blankLineNumber;
 					blankLine = false;
-					continue;
+
 				}
 
 				if (line.length() != 0 && (line.charAt(0) == ' ' || line.charAt(0) == '\t')) { // error 2
@@ -66,9 +68,12 @@ public class FullAssembler implements Assembler {
 		}
 
 		lineNumber = 0;
-		for(String line : code){ // pass 2
+		// System.out.println(code);
+		// System.out.println(data);
+		for (String line : code) { // pass 2
 			lineNumber++;
-			if(line.length() == 0) continue;
+			if (line.length() == 0)
+				continue;
 			String[] parts = line.trim().split("\\s+");
 
 			if (!InstrMap.toCode.keySet().contains(parts[0].toUpperCase())) { // error 4
@@ -83,32 +88,22 @@ public class FullAssembler implements Assembler {
 				}
 			}
 			if (Assembler.noArgument.contains(parts[0].toUpperCase()) && parts.length != 1) { // error 5
-				error.append("\nError on line " + (lineNumber) + ": " + parts[0].toUpperCase() + " cannot have an argument");
+				error.append(
+						"\nError on line " + (lineNumber) + ": " + parts[0].toUpperCase() + " cannot have an argument");
 				retVal = lineNumber;
 			}
 			if (!Assembler.noArgument.contains(parts[0].toUpperCase()) && parts.length != 2) {
-				if(parts.length < 2) {
+				if (parts.length < 2) {
 					error.append("\nError on line " + (lineNumber) + ": mnemonic is missing an argument");
 					retVal = lineNumber;
-				}
-				else{
+				} else {
 					error.append("\nError on line " + (lineNumber) + ": mnemonic has too many arguments");
 					retVal = lineNumber;
 				}
-				
-				if(parts.length < 2) {
-					error.append("\nError on line " + (lineNumber) + ": instruction is missing an argument");
-					retVal = lineNumber;
-				}
-				if(parts.length > 2) {
-					error.append("\nError on line " + (lineNumber) + ": instruction has too many arguments");
-					retVal = lineNumber;
-				}
+
 			}
-			
-			
-			
-			if (parts.length > 1) { // error 6
+
+			if (parts.length == 2) { // error 6
 				try {
 					Integer.parseInt(parts[1], 16);
 				} catch (NumberFormatException e) {
@@ -119,28 +114,28 @@ public class FullAssembler implements Assembler {
 			}
 		}
 
-		for(String line : data) {
+		for (String line : data) {
 			lineNumber++;
-			if(line.length() == 0 || line.toUpperCase().equals("DATA")) continue;
+			if (line.length() == 0 || line.toUpperCase().equals("DATA"))
+				continue;
 			String[] parts = line.split("\\s+");
-			
-			if(parts.length < 2) {
+
+			if (parts.length < 2) {
 				error.append("\nError on line " + (lineNumber) + ": data line has too few values");
 				retVal = lineNumber;
 			}
-			if(parts.length > 2) {
+			if (parts.length > 2) {
 				error.append("\nError on line " + (lineNumber) + ": data line has too many values");
 				retVal = lineNumber;
 			}
-			
-			try {
-				Integer.parseInt(parts[0], 16);
-			} catch (NumberFormatException e) {
-				error.append("\nError on line " + (lineNumber) + ": data has non-numeric memory address");
-				retVal = lineNumber;
-			}
-			
-			if(parts.length > 1) {
+			if (parts.length > 1) {
+				try {
+					Integer.parseInt(parts[0], 16);
+				} catch (NumberFormatException e) {
+					error.append("\nError on line " + (lineNumber) + ": data has non-numeric memory address");
+					retVal = lineNumber;
+				}
+
 				try {
 					Integer.parseInt(parts[1], 16);
 				} catch (NumberFormatException e) {
@@ -150,11 +145,10 @@ public class FullAssembler implements Assembler {
 			}
 		}
 
-		//if we found no errors, now we can assemble the pasm file to a pexe file
-		if(error.length() == 0) {
+		// if we found no errors, now we can assemble the pasm file to a pexe file
+		if (error.length() == 0) {
 			new SimpleAssembler().assemble(inputFileName, outputFileName, error);
-		}
-		else {
+		} else {
 			System.out.println(error.toString());
 		}
 		return retVal;
@@ -163,10 +157,9 @@ public class FullAssembler implements Assembler {
 	public static void main(String[] args) {
 		StringBuilder error = new StringBuilder();
 		System.out.println("Enter the name of the file without extension: ");
-		try (Scanner keyboard = new Scanner(System.in)) { 
+		try (Scanner keyboard = new Scanner(System.in)) {
 			String filename = keyboard.nextLine();
-			int i = new FullAssembler().assemble(filename + ".pasm", 
-					filename + ".pexe", error);
+			int i = new FullAssembler().assemble(filename + ".pasm", filename + ".pexe", error);
 			System.out.println("result = " + i);
 		}
 	}
